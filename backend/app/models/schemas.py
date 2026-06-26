@@ -38,3 +38,113 @@ class Question(BaseModel):
 
 class QuizResponse(BaseModel):
     questions: List[Question]
+
+# --- Scoring Agent Schemas ---
+class QuizAnswer(BaseModel):
+    question_id: str
+    question_text: str
+    selected_option: str
+    correct_option: str
+    topic: str
+    difficulty: str
+    time_taken_seconds: int
+
+class QuizSubmissionRequest(BaseModel):
+    student_id: str
+    session_id: str
+    profile: StudentProfile
+    quiz_answers: List[QuizAnswer]
+    total_time_seconds: int
+
+class TopicScore(BaseModel):
+    score: int
+    correct: int
+    total: int
+
+class CategoryScores(BaseModel):
+    dsa: int
+    programming: int
+    logic: int
+    domain_specific: int
+
+class DifficultyStats(BaseModel):
+    correct: int
+    total: int
+    percentage: int
+
+class DifficultyPerformance(BaseModel):
+    easy: DifficultyStats
+    medium: DifficultyStats
+    hard: DifficultyStats
+
+class BehaviouralSignals(BaseModel):
+    rushed: bool
+    consistent: bool
+    struggled_on: List[str]
+
+class SkillLevelOutput(BaseModel):
+    overall_score: int
+    level: str
+    topic_scores: Dict[str, TopicScore]
+    category_scores: CategoryScores
+    difficulty_performance: DifficultyPerformance
+    strong_areas: List[str]
+    weak_areas: List[str]
+    avg_time_per_question_seconds: float
+    behavioural_signals: BehaviouralSignals
+    classification_reason: str
+    confidence: float
+
+# --- Summary Agent Schemas ---
+class SummarySkillProfile(BaseModel):
+    level: str
+    strengths: List[str]
+    gaps: List[str]
+    readiness_score: int
+
+class ProfileSummaryOutput(BaseModel):
+    summary_text: str
+    skill_profile: SummarySkillProfile
+    focus_areas: List[str]
+    estimated_placement_readiness: str
+    recommended_next_step: str
+    agent_context_tags: List[str]
+
+class SummaryGenerationRequest(BaseModel):
+    profile: StudentProfile
+    skill_result: SkillLevelOutput
+
+# --- Risk Agent Schemas ---
+class TimelineRisk(BaseModel):
+    level: str
+    reason: str
+    months_needed: int
+    months_available: int
+    is_achievable: bool
+
+class SkillGap(BaseModel):
+    area: str
+    severity: str
+    description: str
+    fix_timeline_weeks: int
+    priority: int
+
+class StrategicRisk(BaseModel):
+    risk: str
+    impact: str
+    mitigation: str
+
+class RiskReportOutput(BaseModel):
+    overall_risk_level: str
+    timeline_risk: TimelineRisk
+    skill_gaps: List[SkillGap]
+    strategic_risks: List[StrategicRisk]
+    quick_wins: List[str]
+    red_flags: List[str]
+    risk_summary: str
+
+class RiskAssessmentRequest(BaseModel):
+    profile: StudentProfile
+    summary: ProfileSummaryOutput
+    years_remaining: float
+    hours_per_day: int
